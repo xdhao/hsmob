@@ -17,6 +17,7 @@ late List<PlanData> plans;
 late DateTime _time = DateTime.now();
 late Position _position;
 late PlanData oneplan;
+
 var api = new ApiService();
 
 void main() => runApp(new MaterialApp(
@@ -274,10 +275,15 @@ class MyPlanPage extends StatefulWidget {
 class _MyPlanPageState extends State<MyPlanPage> {
   TextEditingController editingController = TextEditingController();
   late BuildContext _context;
+  bool butcheker = true;
+  bool butcheker1 = false;
+  bool butcheker2 = false;
+  var repm = new Repmob();
 
   @override
   void initState() {
     super.initState();
+    repm.com = "default";
 
     updateLocation();
 
@@ -294,6 +300,32 @@ class _MyPlanPageState extends State<MyPlanPage> {
         api.postgps(coord);
       });
     });
+  }
+
+  void buttonUpdate(int index) {
+    switch (index) {
+      case 1:
+        setState(() {
+          butcheker1 = true;
+          butcheker = false;
+        });
+        break;
+      case 2:
+        setState(() {
+          butcheker2 = true;
+          butcheker1 = false;
+        });
+        break;
+      case 3:
+        setState(() {
+          zz();
+        });
+        break;
+    }
+  }
+
+  void zz() async {
+    plans = await api.getListOfPlans(user.id);
   }
 
   void updateLocation() async {
@@ -318,6 +350,8 @@ class _MyPlanPageState extends State<MyPlanPage> {
   @override
   Widget build(BuildContext context) {
     _context = context;
+    repm.empid = user.id;
+    repm.planid = oneplan.id;
     return new MaterialApp(
       theme: ThemeData(primaryColor: Colors.blueGrey),
       home: new Scaffold(
@@ -375,7 +409,12 @@ class _MyPlanPageState extends State<MyPlanPage> {
                   ],
                   maxLines: 1,
                   initialValue: oneplan.count.toString(),
-                  onSaved: (val) => oneplan.count = num.tryParse(val ?? "")!,
+                  onFieldSubmitted: (val) {
+                    oneplan.count = int.parse(val);
+                  },
+                  onChanged: (val) {
+                    oneplan.count = int.parse(val);
+                  },
                 ),
               ),
               new Container(
@@ -389,7 +428,12 @@ class _MyPlanPageState extends State<MyPlanPage> {
                   ],
                   maxLines: 1,
                   initialValue: oneplan.hours.toString(),
-                  onSaved: (val) => oneplan.hours = int.parse(val!),
+                  onFieldSubmitted: (val) {
+                    oneplan.hours = int.parse(val);
+                  },
+                  onChanged: (val) {
+                    oneplan.hours = int.parse(val);
+                  },
                 ),
               ),
               new Container(
@@ -399,8 +443,57 @@ class _MyPlanPageState extends State<MyPlanPage> {
                       labelText: "Комментарий",
                       border: new OutlineInputBorder(
                           borderSide: new BorderSide(color: Colors.teal))),
-                  onSaved: (val) => oneplan.hours = int.parse(val!),
+                  onFieldSubmitted: (val) {
+                    repm.com = val;
+                  },
+                  onChanged: (val) {
+                    repm.com = val.toString();
+                  },
                 ),
+              ),
+              new Container(
+                padding: const EdgeInsets.only(top: 10.0),
+                child: new MaterialButton(
+                    onPressed: butcheker
+                        ? () {
+                            buttonUpdate(1);
+                            api.startRoute(oneplan.id, user.id, DateTime.now());
+                          }
+                        : null,
+                    child: Text(
+                      "Начать маршрут",
+                      style: TextStyle(fontSize: 22),
+                    )),
+              ),
+              new Container(
+                padding: const EdgeInsets.only(top: 10.0),
+                child: new MaterialButton(
+                    onPressed: butcheker1
+                        ? () {
+                            buttonUpdate(2);
+                            api.endRoute(oneplan.id, user.id, DateTime.now());
+                          }
+                        : null,
+                    child: Text(
+                      "Закончить маршрут",
+                      style: TextStyle(fontSize: 22),
+                    )),
+              ),
+              new Container(
+                padding: const EdgeInsets.only(top: 10.0),
+                child: new ElevatedButton(
+                    onPressed: butcheker2
+                        ? () {
+                            api.genRep(repm);
+                            api.executePlan(oneplan);
+                            buttonUpdate(3);
+                            backToPlans();
+                          }
+                        : null,
+                    child: Text(
+                      "Выполнить",
+                      style: TextStyle(fontSize: 22),
+                    )),
               ),
             ],
           ),

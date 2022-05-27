@@ -42,3 +42,9 @@ class Coordinate {
   late num lat;
   late num lng;
 }
+
+class Repmob {
+  late int planid;
+  late int empid;
+  late String com;
+}

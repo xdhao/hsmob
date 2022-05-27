@@ -103,7 +103,7 @@ class ApiService {
 
   void executePlan(PlanData plan) async {
     final response = await http.Client().post(
-      Uri.parse('http://192.168.1.4:3000/api/Mobile/takegps'),
+      Uri.parse('http://192.168.1.4:3000/api/Plan/addFactFromPlan'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -115,6 +115,55 @@ class ApiService {
         'count': plan.count.toString(),
         'number_of_people': plan.number_of_people.toString(),
         'hours': plan.hours.toString(),
+      }),
+    );
+    if (response.statusCode == 200) {
+      //
+    } else {
+      throw Exception();
+    }
+  }
+
+  void startRoute(int planid, int empid, DateTime time) async {
+    final response = await http.Client().get(
+      Uri.parse(
+          'http://192.168.1.4:3000/api/Mobile/startRoute/${planid}&&${empid}&&${time}'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
+    if (response.statusCode == 200) {
+      //
+    } else {
+      throw Exception();
+    }
+  }
+
+  void endRoute(int planid, int empid, DateTime time) async {
+    final response = await http.Client().get(
+      Uri.parse(
+          'http://192.168.1.4:3000/api/Mobile/endRoute/${planid}&&${empid}&&${time}'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
+    if (response.statusCode == 200) {
+      //
+    } else {
+      throw Exception();
+    }
+  }
+
+  void genRep(Repmob repm) async {
+    final response = await http.Client().post(
+      Uri.parse('http://192.168.1.4:3000/api/Mobile/genRep'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'planid': repm.planid.toString(),
+        'empid': repm.empid.toString(),
+        'com': repm.com,
       }),
     );
     if (response.statusCode == 200) {
