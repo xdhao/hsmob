@@ -179,26 +179,20 @@ class _MyHomePageState extends State<MyHomePage> {
       theme: ThemeData(primaryColor: Colors.blueGrey),
       home: new Scaffold(
         appBar: AppBar(
-          title: Text('gazon homeservice'),
+          title: Text('Gazon homeservice'),
+          backgroundColor: Colors.green[600],
           centerTitle: true,
         ),
         body: new Container(
           child: new Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               new Container(
-                child: new Text('ID: ' +
-                    user.id.toString() +
-                    '\n' +
-                    'FIO: ' +
+                child: new Text('Работник: ' +
                     user.fio +
                     '\n' +
-                    'function: ' +
+                    'Должность: ' +
                     user.func_name),
-                width: 400.0,
-                padding: new EdgeInsets.only(top: 10.0),
-              ),
-              new Container(
-                child: new Text(_time.toString() + " "),
                 width: 400.0,
                 padding: new EdgeInsets.only(top: 10.0),
               ),
@@ -279,6 +273,7 @@ class MyPlanPage extends StatefulWidget {
 
 class _MyPlanPageState extends State<MyPlanPage> {
   TextEditingController editingController = TextEditingController();
+  late BuildContext _context;
 
   @override
   void initState() {
@@ -315,61 +310,97 @@ class _MyPlanPageState extends State<MyPlanPage> {
     }
   }
 
+  void backToPlans() async {
+    Navigator.push(
+        _context, MaterialPageRoute(builder: (context) => SecondScreen()));
+  }
+
   @override
   Widget build(BuildContext context) {
+    _context = context;
     return new MaterialApp(
       theme: ThemeData(primaryColor: Colors.blueGrey),
       home: new Scaffold(
         appBar: AppBar(
-          title: Text('gazon homeservice'),
+          title: Text('Gazon homeservice'),
+          backgroundColor: Colors.green[600],
           centerTitle: true,
         ),
         body: new Container(
           child: new Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               new Container(
-                child: new Text('ID: ' +
-                    user.id.toString() +
-                    '\n' +
-                    'FIO: ' +
+                child: new Text('Работник: ' +
                     user.fio +
                     '\n' +
-                    'function: ' +
+                    'Должность: ' +
                     user.func_name),
                 width: 400.0,
                 padding: new EdgeInsets.only(top: 10.0),
               ),
               new Container(
-                child: new Text(_time.toString() + " "),
-                width: 400.0,
-                padding: new EdgeInsets.only(top: 10.0),
+                child: new BackButton(
+                  onPressed: () {
+                    backToPlans();
+                  },
+                ),
               ),
               new Container(
-                child: new Text(
-                    'Рабочий объект: ' +
-                        oneplan.propadr +
-                        '\n' +
-                        'Наименование работы: ' +
-                        oneplan.workname +
-                        '\n' +
-                        'Дата: ' +
-                        oneplan.date +
-                        '\n' +
-                        'Количество(объем работы): ' +
-                        oneplan.count.toString() +
-                        '\n' +
-                        'Количество людей: ' +
-                        oneplan.number_of_people.toString() +
-                        '\n' +
-                        'Количество часов: ' +
-                        oneplan.hours.toString() +
-                        '\n'
-                            'ФИО клиента: ' +
-                        oneplan.clientfio +
-                        '\n',
-                    style: TextStyle(fontSize: 18)),
-                width: 400.0,
-                padding: new EdgeInsets.only(top: 10.0),
+                  child: Text(
+                      'Рабочий объект: ' +
+                          oneplan.propadr +
+                          '\n' +
+                          'Наименование работы: ' +
+                          oneplan.workname +
+                          '\n' +
+                          'Дата: ' +
+                          oneplan.date +
+                          '\n' +
+                          'Количество людей: ' +
+                          oneplan.number_of_people.toString() +
+                          '\n' +
+                          'ФИО клиента: ' +
+                          oneplan.clientfio +
+                          '\n',
+                      style: TextStyle(fontSize: 18))),
+              new Container(
+                child: new TextFormField(
+                  decoration: new InputDecoration(
+                      labelText: "Количество(объем работы)"),
+                  keyboardType: TextInputType.number,
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.allow(
+                        RegExp(r'[0-9]+[,.]{0,1}[0-9]*')),
+                  ],
+                  maxLines: 1,
+                  initialValue: oneplan.count.toString(),
+                  onSaved: (val) => oneplan.count = num.tryParse(val ?? "")!,
+                ),
+              ),
+              new Container(
+                child: new TextFormField(
+                  decoration:
+                      new InputDecoration(labelText: "Количество часов"),
+                  keyboardType: TextInputType.number,
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.allow(
+                        RegExp(r'[0-9]+[,.]{0,1}[0-9]*')),
+                  ],
+                  maxLines: 1,
+                  initialValue: oneplan.hours.toString(),
+                  onSaved: (val) => oneplan.hours = int.parse(val!),
+                ),
+              ),
+              new Container(
+                padding: const EdgeInsets.only(top: 10.0),
+                child: new TextFormField(
+                  decoration: new InputDecoration(
+                      labelText: "Комментарий",
+                      border: new OutlineInputBorder(
+                          borderSide: new BorderSide(color: Colors.teal))),
+                  onSaved: (val) => oneplan.hours = int.parse(val!),
+                ),
               ),
             ],
           ),

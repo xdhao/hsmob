@@ -95,7 +95,7 @@ class ApiService {
       }),
     );
     if (response.statusCode == 200) {
-      print("send gps");
+      //
     } else {
       throw Exception();
     }
@@ -118,7 +118,7 @@ class ApiService {
       }),
     );
     if (response.statusCode == 200) {
-      print("send plan");
+      //
     } else {
       throw Exception();
     }
