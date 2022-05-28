@@ -316,16 +316,7 @@ class _MyPlanPageState extends State<MyPlanPage> {
           butcheker1 = false;
         });
         break;
-      case 3:
-        setState(() {
-          zz();
-        });
-        break;
     }
-  }
-
-  void zz() async {
-    plans = await api.getListOfPlans(user.id);
   }
 
   void updateLocation() async {
@@ -345,6 +336,11 @@ class _MyPlanPageState extends State<MyPlanPage> {
   void backToPlans() async {
     Navigator.push(
         _context, MaterialPageRoute(builder: (context) => SecondScreen()));
+  }
+
+  Future<void> submit() async {
+    plans = await api.getListOfPlans(user.id);
+    backToPlans();
   }
 
   @override
@@ -486,8 +482,8 @@ class _MyPlanPageState extends State<MyPlanPage> {
                         ? () {
                             api.genRep(repm);
                             api.executePlan(oneplan);
-                            buttonUpdate(3);
-                            backToPlans();
+                            plans = [];
+                            submit();
                           }
                         : null,
                     child: Text(
