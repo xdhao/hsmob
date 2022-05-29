@@ -1,4 +1,4 @@
-## Getting Started
+## Mobile app (gazon-homeservice)
 
 Мобильное приложение, содержащее следущий функционал:
 
