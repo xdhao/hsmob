@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:intl/intl.dart';
 import 'package:hsmob/ApiService.dart';
 import 'package:flutter/material.dart';
 import 'package:html/dom.dart' hide Text;
@@ -21,6 +21,7 @@ late PlanData oneplan;
 var api = new ApiService();
 
 void main() => runApp(new MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: new MyApp(),
     ));
 
@@ -36,6 +37,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     _context = context;
     return new MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(primaryColor: Colors.green),
       home: new Scaffold(
         body: new Center(
           child: new Form(
@@ -45,7 +48,10 @@ class MyApp extends StatelessWidget {
                 children: <Widget>[
                   new Container(
                     child: new TextFormField(
-                      decoration: new InputDecoration(labelText: "Email"),
+                      decoration: new InputDecoration(
+                          labelText: "Email",
+                          border: new OutlineInputBorder(
+                              borderSide: new BorderSide(color: Colors.teal))),
                       keyboardType: TextInputType.emailAddress,
                       maxLines: 1,
                       style: _sizeTextBlack,
@@ -57,7 +63,10 @@ class MyApp extends StatelessWidget {
                   ),
                   new Container(
                     child: new TextFormField(
-                      decoration: new InputDecoration(labelText: "Password"),
+                      decoration: new InputDecoration(
+                          labelText: "Password",
+                          border: new OutlineInputBorder(
+                              borderSide: new BorderSide(color: Colors.teal))),
                       obscureText: true,
                       maxLines: 1,
                       validator: (val) =>
@@ -72,7 +81,7 @@ class MyApp extends StatelessWidget {
                     padding: new EdgeInsets.only(top: 25.0),
                     child: new MaterialButton(
                       onPressed: submit,
-                      color: Theme.of(context).accentColor,
+                      color: Colors.lightGreen[900],
                       height: 50.0,
                       minWidth: 150.0,
                       child: new Text(
@@ -115,6 +124,7 @@ class SecondScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'Gazon homeservice',
         theme: new ThemeData(
           primarySwatch: Colors.blue,
@@ -177,7 +187,8 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     _context = context;
     return new MaterialApp(
-      theme: ThemeData(primaryColor: Colors.blueGrey),
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(primaryColor: Colors.green),
       home: new Scaffold(
         appBar: AppBar(
           title: Text('Gazon homeservice'),
@@ -188,14 +199,21 @@ class _MyHomePageState extends State<MyHomePage> {
           child: new Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              new Container(
-                child: new Text('Работник: ' +
-                    user.fio +
-                    '\n' +
-                    'Должность: ' +
-                    user.func_name),
-                width: 400.0,
-                padding: new EdgeInsets.only(top: 10.0),
+              Container(
+                padding: const EdgeInsets.all(10.0),
+                child: InputDecorator(
+                  decoration: InputDecoration(
+                    labelText: 'Вы',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
+                  child: new Text('ФИО: ' +
+                      user.fio +
+                      '\n' +
+                      'Должность: ' +
+                      user.func_name),
+                ),
               ),
               new Expanded(
                 child: ListView.builder(
@@ -207,33 +225,138 @@ class _MyHomePageState extends State<MyHomePage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                             new Container(
-                                child: Text(
-                                    'Рабочий объект: ' +
-                                        plans[index].propadr +
-                                        '\n' +
-                                        'Наименование работы: ' +
-                                        plans[index].workname +
-                                        '\n' +
-                                        'Дата: ' +
-                                        plans[index].date +
-                                        '\n' +
-                                        'Количество(объем работы): ' +
-                                        plans[index].count.toString() +
-                                        '\n' +
-                                        'Количество людей: ' +
+                                padding: EdgeInsets.only(top: 2),
+                                child: new Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    new Expanded(
+                                      child: Text('Рабочий объект: ',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 18)),
+                                    ),
+                                    new Expanded(
+                                      child: Text(plans[index].propadr,
+                                          style: TextStyle(fontSize: 18)),
+                                    ),
+                                  ],
+                                )),
+                            new Container(
+                              padding: EdgeInsets.only(top: 2),
+                              child: new Row(
+                                children: <Widget>[
+                                  new Expanded(
+                                    child: Text('Наименование работы: ',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 18)),
+                                  ),
+                                  new Expanded(
+                                    child: Text(plans[index].workname,
+                                        style: TextStyle(fontSize: 18)),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            new Container(
+                              padding: EdgeInsets.only(top: 2),
+                              child: new Row(
+                                children: <Widget>[
+                                  new Expanded(
+                                    child: Text('Дата: ',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 18)),
+                                  ),
+                                  new Expanded(
+                                    child: Text(
+                                        (DateFormat('yyyy-MM-dd – kk:mm')
+                                                .format(DateTime.parse(
+                                                    plans[index].date)))
+                                            .toString(),
+                                        style: TextStyle(fontSize: 18)),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            new Container(
+                              padding: EdgeInsets.only(top: 2),
+                              child: new Row(
+                                children: <Widget>[
+                                  new Expanded(
+                                    child: Text('Количество(объем работы): ',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 18)),
+                                  ),
+                                  new Expanded(
+                                    child: Text(plans[index].count.toString(),
+                                        style: TextStyle(fontSize: 18)),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            new Container(
+                              padding: EdgeInsets.only(top: 2),
+                              child: new Row(
+                                children: <Widget>[
+                                  new Expanded(
+                                    child: Text('Количество людей: ',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 18)),
+                                  ),
+                                  new Expanded(
+                                    child: Text(
                                         plans[index]
                                             .number_of_people
-                                            .toString() +
-                                        '\n' +
-                                        'Количество часов: ' +
-                                        plans[index].hours.toString() +
-                                        '\n'
-                                            'ФИО клиента: ' +
-                                        plans[index].clientfio +
-                                        '\n',
-                                    style: TextStyle(fontSize: 18))),
+                                            .toString(),
+                                        style: TextStyle(fontSize: 18)),
+                                  ),
+                                ],
+                              ),
+                            ),
                             new Container(
+                              padding: EdgeInsets.only(top: 2),
+                              child: new Row(
+                                children: <Widget>[
+                                  new Expanded(
+                                    child: Text('Количество часов: ',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 18)),
+                                  ),
+                                  new Expanded(
+                                    child: Text(plans[index].hours.toString(),
+                                        style: TextStyle(fontSize: 18)),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            new Container(
+                              padding: EdgeInsets.only(top: 2),
+                              child: new Row(
+                                children: <Widget>[
+                                  new Expanded(
+                                    child: Text('ФИО клиента: ',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 18)),
+                                  ),
+                                  new Expanded(
+                                    child: Text(plans[index].clientfio,
+                                        style: TextStyle(fontSize: 18)),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            new Container(
+                              padding: const EdgeInsets.all(7.5),
                               child: new ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    primary: Colors
+                                        .lightGreen[900], // Background color
+                                  ),
                                   onPressed: () {
                                     performSelectPlan(plans[index].id);
                                   },
@@ -259,6 +382,7 @@ class PlanScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'Gazon homeservice',
         theme: new ThemeData(
           primarySwatch: Colors.blue,
@@ -349,7 +473,8 @@ class _MyPlanPageState extends State<MyPlanPage> {
     repm.empid = user.id;
     repm.planid = oneplan.id;
     return new MaterialApp(
-      theme: ThemeData(primaryColor: Colors.blueGrey),
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(primaryColor: Colors.green),
       home: new Scaffold(
         appBar: AppBar(
           title: Text('Gazon homeservice'),
@@ -360,14 +485,21 @@ class _MyPlanPageState extends State<MyPlanPage> {
           child: new Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              new Container(
-                child: new Text('Работник: ' +
-                    user.fio +
-                    '\n' +
-                    'Должность: ' +
-                    user.func_name),
-                width: 400.0,
-                padding: new EdgeInsets.only(top: 10.0),
+              Container(
+                padding: const EdgeInsets.all(10.0),
+                child: InputDecorator(
+                  decoration: InputDecoration(
+                    labelText: 'Вы',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
+                  child: new Text('ФИО: ' +
+                      user.fio +
+                      '\n' +
+                      'Должность: ' +
+                      user.func_name),
+                ),
               ),
               new Container(
                 child: new BackButton(
@@ -377,27 +509,95 @@ class _MyPlanPageState extends State<MyPlanPage> {
                 ),
               ),
               new Container(
-                  child: Text(
-                      'Рабочий объект: ' +
-                          oneplan.propadr +
-                          '\n' +
-                          'Наименование работы: ' +
-                          oneplan.workname +
-                          '\n' +
-                          'Дата: ' +
-                          oneplan.date +
-                          '\n' +
-                          'Количество людей: ' +
-                          oneplan.number_of_people.toString() +
-                          '\n' +
-                          'ФИО клиента: ' +
-                          oneplan.clientfio +
-                          '\n',
-                      style: TextStyle(fontSize: 18))),
+                  padding: EdgeInsets.only(top: 2),
+                  child: new Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      new Expanded(
+                        child: Text('Рабочий объект: ',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 18)),
+                      ),
+                      new Expanded(
+                        child: Text(oneplan.propadr,
+                            style: TextStyle(fontSize: 18)),
+                      ),
+                    ],
+                  )),
               new Container(
+                padding: EdgeInsets.only(top: 2),
+                child: new Row(
+                  children: <Widget>[
+                    new Expanded(
+                      child: Text('Наименование работы: ',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 18)),
+                    ),
+                    new Expanded(
+                      child: Text(oneplan.workname,
+                          style: TextStyle(fontSize: 18)),
+                    ),
+                  ],
+                ),
+              ),
+              new Container(
+                padding: EdgeInsets.only(top: 2),
+                child: new Row(
+                  children: <Widget>[
+                    new Expanded(
+                      child: Text('Дата: ',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 18)),
+                    ),
+                    new Expanded(
+                      child: Text(
+                          (DateFormat('yyyy-MM-dd – kk:mm')
+                                  .format(DateTime.parse(oneplan.date)))
+                              .toString(),
+                          style: TextStyle(fontSize: 18)),
+                    ),
+                  ],
+                ),
+              ),
+              new Container(
+                padding: EdgeInsets.only(top: 2),
+                child: new Row(
+                  children: <Widget>[
+                    new Expanded(
+                      child: Text('Количество людей: ',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 18)),
+                    ),
+                    new Expanded(
+                      child: Text(oneplan.number_of_people.toString(),
+                          style: TextStyle(fontSize: 18)),
+                    ),
+                  ],
+                ),
+              ),
+              new Container(
+                padding: EdgeInsets.only(top: 2),
+                child: new Row(
+                  children: <Widget>[
+                    new Expanded(
+                      child: Text('ФИО клиента: ',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 18)),
+                    ),
+                    new Expanded(
+                      child: Text(oneplan.clientfio,
+                          style: TextStyle(fontSize: 18)),
+                    ),
+                  ],
+                ),
+              ),
+              new Container(
+                padding: const EdgeInsets.only(top: 10),
                 child: new TextFormField(
                   decoration: new InputDecoration(
-                      labelText: "Количество(объем работы)"),
+                      labelText: "Количество(объем работы)",
+                      border: new OutlineInputBorder(
+                          borderSide: new BorderSide(color: Colors.teal))),
                   keyboardType: TextInputType.number,
                   inputFormatters: <TextInputFormatter>[
                     FilteringTextInputFormatter.allow(
@@ -414,9 +614,12 @@ class _MyPlanPageState extends State<MyPlanPage> {
                 ),
               ),
               new Container(
+                padding: const EdgeInsets.only(top: 10),
                 child: new TextFormField(
-                  decoration:
-                      new InputDecoration(labelText: "Количество часов"),
+                  decoration: new InputDecoration(
+                      labelText: "Количество часов",
+                      border: new OutlineInputBorder(
+                          borderSide: new BorderSide(color: Colors.teal))),
                   keyboardType: TextInputType.number,
                   inputFormatters: <TextInputFormatter>[
                     FilteringTextInputFormatter.allow(
@@ -478,6 +681,9 @@ class _MyPlanPageState extends State<MyPlanPage> {
               new Container(
                 padding: const EdgeInsets.only(top: 10.0),
                 child: new ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.lightGreen[900], // Background color
+                    ),
                     onPressed: butcheker2
                         ? () {
                             api.genRep(repm);
