@@ -102,7 +102,7 @@ class MyApp extends StatelessWidget {
     if (form!.validate()) {
       form.save();
       user = await api.login(_email, _password);
-      plans = await api.getListOfPlans(user.id);
+      plans = [];
       performLogin();
     }
   }
@@ -146,6 +146,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
 
+    updatePlans();
     updateLocation();
 
     StreamSubscription positionStream =
@@ -161,6 +162,10 @@ class _MyHomePageState extends State<MyHomePage> {
         api.postgps(coord);
       });
     });
+  }
+
+  void updatePlans() async {
+    plans = await api.getListOfPlans(user.id);
   }
 
   void updateLocation() async {
@@ -462,11 +467,6 @@ class _MyPlanPageState extends State<MyPlanPage> {
         _context, MaterialPageRoute(builder: (context) => SecondScreen()));
   }
 
-  Future<void> submit() async {
-    plans = await api.getListOfPlans(user.id);
-    backToPlans();
-  }
-
   @override
   Widget build(BuildContext context) {
     _context = context;
@@ -689,7 +689,7 @@ class _MyPlanPageState extends State<MyPlanPage> {
                             api.genRep(repm);
                             api.executePlan(oneplan);
                             plans = [];
-                            submit();
+                            backToPlans();
                           }
                         : null,
                     child: Text(
